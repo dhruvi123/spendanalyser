@@ -262,6 +262,13 @@ body{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-
 /* SCORE RING ON HOME */
 .home-ring{width:100px;height:100px;margin:0 auto}
 
+/* ADJUST MODAL */
+#adj-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.45);z-index:400;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity 0.25s}
+#adj-overlay.open{opacity:1;pointer-events:all}
+#adj-sheet{background:white;border-radius:24px 24px 0 0;padding:24px 22px 32px;width:100%;transform:translateY(100%);transition:transform 0.3s cubic-bezier(.4,0,.2,1)}
+#adj-overlay.open #adj-sheet{transform:translateY(0)}
+.adj-slider{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;background:var(--border);outline:none;margin:14px 0 8px}
+.adj-slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--teal);cursor:pointer;box-shadow:0 2px 8px rgba(11,110,110,0.35)}
 /* QUICK STATS ROW */
 .qstat{flex:1;display:flex;flex-direction:column;align-items:center;padding:12px 6px;background:rgba(255,255,255,0.18)!important;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.3)}
 
@@ -858,6 +865,52 @@ body{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-
   </div>
 </div>
 
+<!-- GOAL ADJUST MODAL -->
+<div id="adj-overlay" onclick="closeAdjust(event)">
+  <div id="adj-sheet">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px"></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <span style="font-size:24px" id="adj-icon">🍜</span>
+      <div>
+        <div style="font-size:16px;font-weight:800;color:var(--text)" id="adj-name">Food &amp; Dining</div>
+        <div style="font-size:12px;color:var(--text-muted)">Monthly goal</div>
+      </div>
+    </div>
+    <!-- Live preview -->
+    <div style="background:var(--teal-xlight);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600">SPENT</div>
+        <div style="font-size:18px;font-weight:800;color:var(--teal);font-family:var(--mono)" id="adj-spent-lbl">₹6,500</div>
+      </div>
+      <div style="font-size:24px">→</div>
+      <div style="text-align:right">
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600">NEW GOAL</div>
+        <div style="font-size:18px;font-weight:800;color:var(--teal);font-family:var(--mono)" id="adj-goal-lbl">₹10,000</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600">USAGE</div>
+        <div style="font-size:18px;font-weight:800;font-family:var(--mono)" id="adj-pct-lbl" style="color:var(--green)">65%</div>
+      </div>
+    </div>
+    <input type="range" class="adj-slider" id="adj-slider" min="1000" max="50000" step="500" value="10000" oninput="syncAdjust(this.value)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+      <div style="font-size:12px;color:var(--text-muted);font-weight:600">₹</div>
+      <input type="number" id="adj-num" style="flex:1;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:16px;font-weight:700;font-family:var(--mono);outline:none;color:var(--text)" min="1000" max="50000" step="500" oninput="syncAdjust(this.value)">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <button style="border:1px solid var(--border);background:var(--bg);border-radius:6px;width:32px;height:28px;font-size:16px;cursor:pointer;font-family:var(--font)" onclick="nudgeGoal(500)">+</button>
+        <button style="border:1px solid var(--border);background:var(--bg);border-radius:6px;width:32px;height:28px;font-size:16px;cursor:pointer;font-family:var(--font)" onclick="nudgeGoal(-500)">−</button>
+      </div>
+    </div>
+    <!-- Progress preview -->
+    <div class="prog-wrap" style="margin-bottom:18px">
+      <div class="prog-fill" id="adj-bar" style="width:65%;background:var(--green);transition:width 0.3s,background 0.3s"></div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button style="flex:1;padding:13px;border:1.5px solid var(--border);border-radius:var(--radius);background:none;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);color:var(--text-sec)" onclick="closeAdjust()">Cancel</button>
+      <button class="btn primary" style="flex:2" onclick="applyAdjust()">Save Goal ✓</button>
+    </div>
+  </div>
+</div>
 </div><!-- /phone -->
 
 <script>
@@ -1193,15 +1246,62 @@ function selTag(el) {
 // SAVINGS
 // ═══════════════════════════════════════════════════════════
 function renderSavCats() {
-  document.getElementById('sav-cats').innerHTML = CATS.map(c=>`
+  document.getElementById('sav-cats').innerHTML = CATS.map((c,i)=>`
     <div style="background:white;border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;box-shadow:var(--shadow-sm)">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div style="display:flex;align-items:center;gap:9px"><span style="font-size:20px">${c.icon}</span><span style="font-size:13px;font-weight:700;color:var(--text)">${c.name}</span></div>
-        <div style="display:flex;align-items:center;gap:8px">${pill(c.spent,c.goal)}<span style="font-size:12px;font-weight:700;color:var(--teal);cursor:pointer" onclick="toast('Adjust ${c.name} goal')">Adjust</span></div>
+        <div style="display:flex;align-items:center;gap:8px">${pill(c.spent,c.goal)}<button style="font-size:12px;font-weight:700;color:var(--teal);cursor:pointer;background:var(--teal-xlight);border:1.5px solid var(--teal-light);border-radius:8px;padding:5px 12px;font-family:var(--font)" onclick="openAdjust(${i})">Adjust</button></div>
       </div>
       <div class="prog-wrap"><div class="prog-fill" style="width:${pct(c.spent,c.goal)}%;background:${barCol(c.spent,c.goal)}"></div></div>
       <div style="font-size:11px;color:var(--text-muted);margin-top:6px;display:flex;justify-content:space-between"><span>${fmt(c.spent)} spent</span><span>${fmt(c.goal)} goal</span></div>
     </div>`).join('');
+}
+
+let adjIdx = 0;
+function openAdjust(i) {
+  adjIdx = i;
+  const c = CATS[i];
+  document.getElementById('adj-icon').textContent = c.icon;
+  document.getElementById('adj-name').textContent = c.name;
+  document.getElementById('adj-spent-lbl').textContent = fmt(c.spent);
+  document.getElementById('adj-slider').value = c.goal;
+  document.getElementById('adj-num').value = c.goal;
+  syncAdjust(c.goal);
+  document.getElementById('adj-overlay').classList.add('open');
+}
+function closeAdjust(e) {
+  if(e && e.target !== document.getElementById('adj-overlay')) return;
+  document.getElementById('adj-overlay').classList.remove('open');
+}
+function syncAdjust(val) {
+  val = Math.max(1000, Math.min(50000, parseInt(val)||1000));
+  document.getElementById('adj-slider').value = val;
+  document.getElementById('adj-num').value = val;
+  document.getElementById('adj-goal-lbl').textContent = fmt(val);
+  const c = CATS[adjIdx];
+  const used = Math.round(c.spent / val * 100);
+  const pctEl = document.getElementById('adj-pct-lbl');
+  pctEl.textContent = used + '%';
+  pctEl.style.color = used > 100 ? 'var(--red)' : used > 85 ? 'var(--amber)' : 'var(--green)';
+  const bar = document.getElementById('adj-bar');
+  bar.style.width = Math.min(used, 100) + '%';
+  bar.style.background = used > 100 ? 'var(--red)' : used > 85 ? 'var(--amber)' : 'var(--green)';
+}
+function nudgeGoal(delta) {
+  const cur = parseInt(document.getElementById('adj-num').value)||0;
+  syncAdjust(cur + delta);
+}
+function applyAdjust() {
+  const newGoal = parseInt(document.getElementById('adj-num').value)||CATS[adjIdx].goal;
+  CATS[adjIdx].goal = newGoal;
+  // persist goals
+  const goals = CATS.map(c=>c.goal);
+  LS.set('goals', goals);
+  document.getElementById('adj-overlay').classList.remove('open');
+  renderSavCats();
+  renderBarChart();
+  renderHomeCats();
+  toast(`✓ ${CATS[adjIdx].name} goal updated to ${fmt(newGoal)}`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1302,6 +1402,10 @@ function sendChip(text) {
 // ═══════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════
+// Restore saved goals
+const savedGoals = LS.get('goals');
+if(savedGoals) savedGoals.forEach((g,i)=>{ if(CATS[i]) CATS[i].goal = g; });
+
 renderHomeCats();
 renderAllCats();
 renderSavCats();
