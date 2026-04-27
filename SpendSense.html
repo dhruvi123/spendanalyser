@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>SpendSense — HDFC</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --hdfc-red:#C41E3A;--hdfc-red-dark:#9B1530;--hdfc-red-light:#FEE2E2;
+  --teal:#0B6E6E;--teal-dark:#084F4F;--teal-mid:#0D7F7F;--teal-light:#E0F5F5;--teal-xlight:#F0FAFA;
+  --amber:#E8960A;--amber-light:#FEF3C7;
+  --green:#0C9E5C;--green-light:#D1FAE5;
+  --red:#DC2626;--red-light:#FEE2E2;
+  --bg:#F4F6F8;--white:#FFFFFF;
+  --border:#E2E6EA;--border-dark:#CED4DA;
+  --text:#0F1923;--text-sec:#4A5568;--text-muted:#8A9AB0;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.08),0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg:0 10px 30px rgba(0,0,0,0.12);
+  --font:'Plus Jakarta Sans',sans-serif;--mono:'JetBrains Mono',monospace;
+  --radius:14px;--radius-sm:8px;--radius-lg:20px;
+}
+body{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:32px 16px;font-family:var(--font)}
+#phone{width:390px;min-height:844px;height:844px;background:var(--white);border-radius:48px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.5),0 0 0 10px #1c1c1e,0 0 0 12px #2c2c2e,inset 0 0 0 1px rgba(255,255,255,0.1);position:relative;display:flex;flex-direction:column}
+
+/* SCREENS */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--white);opacity:0;pointer-events:none;transform:translateX(24px);transition:opacity 0.22s ease,transform 0.22s ease}
+.screen.active{opacity:1;pointer-events:all;transform:translateX(0)}
+.screen.back-enter{transform:translateX(-24px)}
+
+/* SCROLLABLE */
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+
+/* STATUS BAR */
+.sb{height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;flex-shrink:0;font-size:15px;font-weight:600}
+.sb.dark{background:var(--hdfc-red);color:white}
+.sb.light{background:var(--white);color:var(--text);border-bottom:1px solid var(--border)}
+.sb.teal{background:var(--teal-dark);color:white}
+.sb .batt{font-size:12px;display:flex;align-items:center;gap:3px}
+
+/* BOTTOM NAV */
+.nav{height:68px;background:var(--white);border-top:1px solid var(--border);display:flex;align-items:center;flex-shrink:0;padding-bottom:6px;box-shadow:0 -4px 20px rgba(0,0,0,0.06)}
+.navbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:8px 0;border:none;background:none;font-family:var(--font);transition:all 0.15s}
+.navbtn .ni{font-size:22px}
+.navbtn .nl{font-size:10px;font-weight:600;color:var(--text-muted)}
+.navbtn.on .nl{color:var(--teal)}
+
+/* CARDS */
+.card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:16px;box-shadow:var(--shadow-sm)}
+.card.teal-grad{background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%);border:none;box-shadow:var(--shadow-md)}
+.card.red-grad{background:linear-gradient(135deg,var(--hdfc-red) 0%,var(--hdfc-red-dark) 100%);border:none}
+.card.glass{background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.15)}
+
+/* TYPOGRAPHY */
+.t-hero{font-size:38px;font-weight:800;font-family:var(--mono);letter-spacing:-1px}
+.t-h1{font-size:22px;font-weight:700}
+.t-h2{font-size:17px;font-weight:700}
+.t-h3{font-size:14px;font-weight:600}
+.t-body{font-size:14px;font-weight:400;line-height:1.6}
+.t-small{font-size:12px;font-weight:500}
+.t-tiny{font-size:11px;font-weight:500;letter-spacing:0.3px}
+.t-mono{font-family:var(--mono)}
+.t-muted{color:var(--text-muted)}
+.t-sec{color:var(--text-sec)}
+.t-teal{color:var(--teal)}
+.t-red{color:var(--red)}
+.t-white{color:white}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.2px}
+.pill.green{background:var(--green-light);color:#065f46}
+.pill.red{background:var(--red-light);color:#991b1b}
+.pill.amber{background:var(--amber-light);color:#78350f}
+.pill.teal{background:var(--teal-light);color:var(--teal-dark)}
+.pill.grey{background:var(--bg);color:var(--text-sec);border:1px solid var(--border)}
+.pill.hdfc{background:var(--hdfc-red-light);color:var(--hdfc-red-dark)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--radius-sm);font-family:var(--font);font-weight:700;cursor:pointer;border:none;transition:all 0.15s;font-size:14px}
+.btn.primary{background:var(--teal);color:white;padding:13px 22px;width:100%;border-radius:var(--radius)}
+.btn.primary:active{background:var(--teal-dark);transform:scale(0.98)}
+.btn.outline{background:transparent;color:var(--teal);border:2px solid var(--teal);padding:10px 18px;border-radius:var(--radius-sm)}
+.btn.ghost{background:var(--teal-xlight);color:var(--teal);padding:8px 14px;font-size:12px;border-radius:var(--radius-sm)}
+.btn.red{background:var(--hdfc-red);color:white;padding:13px 22px;width:100%;border-radius:var(--radius)}
+.btn.sm{padding:7px 14px;font-size:12px;border-radius:var(--radius-sm)}
+
+/* PROGRESS BAR */
+.prog-wrap{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+
+/* TOGGLE */
+.tog{width:48px;height:26px;border-radius:13px;position:relative;cursor:pointer;border:none;flex-shrink:0;transition:background 0.2s}
+.tog.on{background:var(--teal)}
+.tog.off{background:var(--border-dark)}
+.tog::after{content:'';position:absolute;top:3px;width:20px;height:20px;background:white;border-radius:50%;transition:left 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.25)}
+.tog.on::after{left:25px}
+.tog.off::after{left:3px}
+
+/* BACK HEADER */
+.bk-hdr{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.bk-btn{background:var(--teal-light);border:none;color:var(--teal);font-size:18px;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-weight:700;transition:all 0.15s}
+.bk-btn:active{background:var(--teal);color:white}
+
+/* AVATAR */
+.av{display:flex;align-items:center;justify-content:center;border-radius:50%;color:white;font-weight:800;flex-shrink:0}
+
+/* SECTION HEADER */
+.sec-hdr{font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--text-muted);padding:18px 20px 8px;flex-shrink:0}
+
+/* SETTING ROW */
+.set-row{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s}
+.set-row:last-child{border-bottom:none}
+.set-row:active{background:var(--bg)}
+.set-row .st{font-size:14px;font-weight:600;color:var(--text)}
+.set-row .ss{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+/* TXN ROW */
+.txn{display:flex;align-items:center;gap:13px;padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s}
+.txn:active{background:var(--bg)}
+.txn:last-child{border-bottom:none}
+.txn-info{flex:1;min-width:0}
+.txn-m{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.txn-d{font-size:12px;color:var(--text-muted);margin-top:2px}
+.txn-amt{font-size:15px;font-weight:700;color:var(--teal);font-family:var(--mono)}
+
+/* CATEGORY ROW */
+.cat-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--radius);border:1.5px solid var(--border);margin-bottom:10px;cursor:pointer;transition:all 0.18s;background:var(--white)}
+.cat-row:hover,.cat-row:active{border-color:var(--teal);background:var(--teal-xlight);transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.cat-row.over{border-color:var(--red);background:#fffafa}
+.cat-row.over:hover{border-color:var(--red)}
+
+/* CHAT */
+.cbubble{max-width:84%;border-radius:18px;font-size:13.5px;line-height:1.55;padding:11px 15px;margin-bottom:6px}
+.cbubble.user{background:var(--teal);color:white;align-self:flex-end;border-radius:18px 4px 18px 18px;margin-left:auto}
+.cbubble.app{background:var(--bg);color:var(--text);border-radius:4px 18px 18px 18px;border:1px solid var(--border);align-self:flex-start}
+.chat-meta{font-size:10px;font-weight:700;color:var(--teal);margin-bottom:3px;letter-spacing:0.5px}
+
+/* CHIPS */
+.chip-row{display:flex;gap:8px;padding:0 20px 14px;overflow-x:auto;flex-shrink:0}
+.chip-row::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;padding:8px 14px;border-radius:22px;font-size:12px;font-weight:600;background:var(--teal-xlight);border:1.5px solid var(--teal-light);color:var(--teal);cursor:pointer;transition:all 0.15s;font-family:var(--font)}
+.chip:hover,.chip:active{background:var(--teal);color:white;border-color:var(--teal)}
+
+/* PERIOD TABS */
+.ptabs{display:flex;gap:6px;padding:12px 20px;flex-shrink:0}
+.ptab{flex:1;padding:9px;border-radius:10px;font-size:12px;font-weight:700;text-align:center;cursor:pointer;border:1.5px solid var(--border);color:var(--text-sec);background:var(--white);transition:all 0.15s;font-family:var(--font)}
+.ptab.on{background:var(--teal);color:white;border-color:var(--teal);box-shadow:0 4px 12px rgba(11,110,110,0.25)}
+
+/* DETAIL ROW */
+.drow{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;border-bottom:1px solid var(--border)}
+.drow:last-child{border-bottom:none}
+.dl{font-size:12px;color:var(--text-muted);font-weight:500}
+.dv{font-size:13px;font-weight:700;color:var(--text);text-align:right}
+
+/* BREADCRUMB */
+.bc{display:flex;align-items:center;justify-content:space-between;padding:7px 20px;background:linear-gradient(90deg,var(--teal-xlight),var(--teal-light));flex-shrink:0;border-bottom:1px solid var(--teal-light)}
+.bc-link{font-size:12px;color:var(--teal);font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:var(--font)}
+.bc-name{font-size:12px;font-weight:800;color:var(--teal-dark);letter-spacing:0.3px}
+
+/* TOAST */
+#toast{position:absolute;bottom:88px;left:50%;transform:translateX(-50%);background:rgba(15,25,35,0.92);color:white;padding:11px 20px;border-radius:12px;font-size:13px;font-weight:600;white-space:nowrap;z-index:300;pointer-events:none;transition:opacity 0.25s;font-family:var(--font);backdrop-filter:blur(8px);box-shadow:var(--shadow-md)}
+#toast.h{opacity:0}
+
+/* LOADING OVERLAY */
+#ldo{position:absolute;inset:0;background:linear-gradient(135deg,var(--teal-dark),#042f2f);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;transition:opacity 0.35s}
+#ldo.h{opacity:0;pointer-events:none}
+.spin{width:28px;height:28px;border:2.5px solid rgba(255,255,255,0.2);border-top:2.5px solid white;border-radius:50%;animation:sp 0.75s linear infinite;margin-top:24px}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* INPUT */
+.inp{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 15px;font-size:14px;font-family:var(--font);outline:none;color:var(--text);transition:border-color 0.15s}
+.inp:focus{border-color:var(--teal);background:white}
+
+/* RING */
+.ring-wrap{position:relative;width:160px;height:160px;margin:0 auto}
+.ring-svg{position:absolute;inset:0;width:100%;height:100%}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+
+/* INSIGHT CARD */
+.insight{border-radius:var(--radius);padding:15px;margin-bottom:12px;display:flex;gap:10px;align-items:flex-start}
+.insight.warn{background:var(--amber-light);border:1px solid #fcd34d}
+.insight.danger{background:var(--red-light);border:1px solid #fca5a5}
+.insight.good{background:var(--green-light);border:1px solid #6ee7b7}
+
+/* PM ROW */
+.pm-row{display:flex;align-items:center;gap:13px;padding:14px 20px;border-bottom:1px solid var(--border)}
+.pm-row:last-child{border-bottom:none}
+.pm-info{flex:1}
+.pm-n{font-size:14px;font-weight:700;color:var(--text)}
+.pm-h{font-size:12px;color:var(--text-muted);margin-top:1px}
+
+/* NLP INPUT */
+.nlp-row{display:flex;gap:10px;padding:12px 20px;border-top:1px solid var(--border);background:white;flex-shrink:0}
+.nlp-inp{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:26px;padding:11px 18px;font-size:14px;font-family:var(--font);outline:none;color:var(--text);transition:border-color 0.15s}
+.nlp-inp:focus{border-color:var(--teal);background:white}
+.nlp-send{width:44px;height:44px;border-radius:50%;background:var(--teal);border:none;color:white;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;box-shadow:0 4px 12px rgba(11,110,110,0.3)}
+.nlp-send:active{background:var(--teal-dark);transform:scale(0.95)}
+.nlp-loading{display:flex;gap:5px;align-items:center;padding:12px 16px}
+.nlp-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);animation:nd 1.2s ease-in-out infinite}
+.nlp-dot:nth-child(2){animation-delay:0.2s}
+.nlp-dot:nth-child(3){animation-delay:0.4s}
+@keyframes nd{0%,60%,100%{transform:scale(0.6);opacity:0.4}30%{transform:scale(1);opacity:1}}
+
+/* HDFC SPECIFIC */
+.hdfc-hdr{background:var(--hdfc-red);padding:12px 20px 0}
+.hdfc-menu{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.hdfc-tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:0}
+.hdfc-tabs::-webkit-scrollbar{display:none}
+.htab{white-space:nowrap;padding:8px 16px;border-radius:10px 10px 0 0;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);border:none;transition:all 0.15s}
+.htab.on{background:var(--white);color:var(--hdfc-red)}
+.htab.off{background:transparent;color:rgba(255,255,255,0.8)}
+.htab.new{background:rgba(255,255,255,0.15);color:white;border:1.5px solid rgba(255,255,255,0.4)}
+.htab.new::before{content:'✨ ';font-size:11px}
+
+/* PROMO */
+.promo{margin:12px 16px;background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%);border-radius:var(--radius);padding:18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.15s;box-shadow:0 6px 20px rgba(11,110,110,0.3)}
+.promo:active{transform:scale(0.98);opacity:0.9}
+.promo-cta{display:inline-block;margin-top:12px;padding:8px 16px;border:1.5px solid rgba(255,255,255,0.6);border-radius:8px;font-size:12px;font-weight:700;color:white;font-family:var(--font)}
+
+/* QS GRID */
+.qsg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:4px 0}
+.qsi{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;padding:8px 4px;border-radius:10px;transition:background 0.15s}
+.qsi:active{background:var(--bg)}
+.qsic{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px}
+.qsil{font-size:10px;color:var(--text-sec);text-align:center;font-weight:600;line-height:1.3}
+
+/* SPENDING METER (home) */
+.spend-meter{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:4px}
+.spend-meter-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal-mid));border-radius:2px;transition:width 1s ease}
+
+/* ONBOARDING */
+.onb-page{display:none;text-align:center;padding:0 28px}
+.onb-page.active{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1}
+
+/* CATEGORY PICK CHIP */
+.cpc{padding:8px 14px;border-radius:20px;font-size:12px;font-weight:600;background:var(--bg);border:1.5px solid var(--border);cursor:pointer;transition:all 0.15s;font-family:var(--font)}
+.cpc.sel,.cpc:active{background:var(--teal-light);border-color:var(--teal);color:var(--teal-dark)}
+
+/* MICRO ANIMATIONS */
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.anim-up{animation:slideUp 0.4s ease forwards}
+.anim-fade{animation:fadeIn 0.3s ease forwards}
+
+/* SCORE RING ON HOME */
+.home-ring{width:100px;height:100px;margin:0 auto}
+
+/* QUICK STATS ROW */
+.qstat{flex:1;display:flex;flex-direction:column;align-items:center;padding:14px 8px;background:var(--white);border-radius:var(--radius-sm);border:1.5px solid var(--border)}
+
+/* STAR RATING */
+.stars{display:flex;gap:3px;font-size:16px}
+
+/* INPUT GROUP */
+.inp-group{margin-bottom:14px}
+.inp-label{font-size:12px;font-weight:700;color:var(--text-sec);margin-bottom:5px;letter-spacing:0.3px}
+
+/* BADGE DOT */
+.bdot{width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.3);opacity:0.7}}
+</style>
+</head>
+<body>
+<div id="phone">
+
+<!-- LOADING -->
+<div id="ldo" class="h">
+  <div style="font-size:52px;margin-bottom:20px">💳</div>
+  <div style="font-size:18px;font-weight:800;color:white;font-family:var(--font)">SpendSense</div>
+  <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:6px;font-family:var(--font)" id="ld-msg">Loading your account…</div>
+  <div class="spin"></div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="h"></div>
+
+<!-- ══════════════════════════════════════
+     SCREEN: HDFC BANK HOME
+══════════════════════════════════════ -->
+<div id="s-bank" class="screen active">
+  <div class="sb dark" style="background:var(--hdfc-red)">
+    <span>10:13</span>
+    <span style="font-size:12px;opacity:0.9">HDFC Bank</span>
+    <span class="batt">49% 🔋</span>
+  </div>
+
+  <!-- HDFC Header -->
+  <div class="hdfc-hdr">
+    <div class="hdfc-menu">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:34px;height:34px;background:rgba(255,255,255,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px" onclick="toast('Menu')">☰</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:white">HDFC Bank</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.7)">NetBanking</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="position:relative;cursor:pointer" onclick="toast('Notifications')">
+          <span style="font-size:20px">🔔</span>
+          <div style="position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:white;border-radius:50%;border:1.5px solid var(--hdfc-red)"></div>
+        </div>
+        <div style="width:34px;height:34px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:white;cursor:pointer">D</div>
+      </div>
+    </div>
+    <!-- Tabs -->
+    <div class="hdfc-tabs">
+      <button class="htab on" onclick="">OVERVIEW</button>
+      <button class="htab off" onclick="toast('Coming soon')">FAVOURITE</button>
+      <button class="htab off" onclick="toast('Coming soon')">ACCOUNTS</button>
+      <button class="htab new" onclick="startOnboard()">SPEND OVERVIEW</button>
+    </div>
+  </div>
+
+  <div class="scroll" style="background:var(--bg)">
+
+    <!-- Account Balance Card -->
+    <div style="padding:12px 16px">
+      <div class="card" style="padding:20px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">SAVINGS ACCOUNT</div>
+            <div style="font-size:28px;font-weight:800;color:var(--text);font-family:var(--mono)" id="bal-display">₹4,040.00</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:4px">XXXX XXXX XXXX 1288</div>
+          </div>
+          <div style="text-align:right">
+            <span class="pill green" style="margin-bottom:6px;display:block">Active</span>
+            <span style="font-size:12px;font-weight:700;color:var(--teal);cursor:pointer" onclick="toast('View All Accounts')">View All ›</span>
+          </div>
+        </div>
+        <!-- Mini bar -->
+        <div style="margin-top:14px;display:flex;gap:6px;align-items:center">
+          <div style="flex:2;height:4px;border-radius:2px;background:var(--hdfc-red-light)"></div>
+          <div style="flex:3;height:4px;border-radius:2px;background:var(--hdfc-red);opacity:0.6"></div>
+          <div style="flex:1;height:4px;border-radius:2px;background:var(--hdfc-red-light)"></div>
+          <span style="font-size:11px;color:var(--text-muted)">34% used</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Services -->
+    <div style="padding:0 16px 12px">
+      <div class="card">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:14px;text-transform:uppercase">Quick Services</div>
+        <div class="qsg">
+          <div class="qsi" onclick="toast('Bill Payments')"><div class="qsic" style="background:#fce7f3">💸</div><div class="qsil">Bill Payments</div></div>
+          <div class="qsi" onclick="toast('Money Transfer')"><div class="qsic" style="background:#dbeafe">📤</div><div class="qsil">Money Transfer</div></div>
+          <div class="qsi" onclick="toast('Add Payee')"><div class="qsic" style="background:#fef3c7">➕</div><div class="qsil">Add Payee</div></div>
+          <div class="qsi" onclick="toast('Scan & Pay')"><div class="qsic" style="background:#ede9fe">📷</div><div class="qsil">Scan & Pay</div></div>
+          <div class="qsi" onclick="toast('Recharge')"><div class="qsic" style="background:#d1fae5">🔄</div><div class="qsil">Recharge</div></div>
+          <div class="qsi" onclick="toast('UPI Payment')"><div class="qsic" style="background:#e0f2fe">💳</div><div class="qsil">UPI Payment</div></div>
+          <div class="qsi" onclick="toast('Due Bills — 2 pending')"><div class="qsic" style="background:#fee2e2">📋</div><div class="qsil">Due Bills</div></div>
+          <div class="qsi" onclick="toast('Statements')"><div class="qsic" style="background:#f3f4f6">🧾</div><div class="qsil">Statements</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Promo Banner -->
+    <div class="promo" onclick="startOnboard()">
+      <div style="flex:1">
+        <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">✨ New Feature</div>
+        <div style="font-size:18px;font-weight:800;color:white;margin-bottom:4px">Spend Overview</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.8)">Track all your spending across UPI, cards &amp; bank in one intelligent dashboard</div>
+        <div class="promo-cta">Open Spend Overview →</div>
+      </div>
+      <div style="font-size:48px;margin-left:12px">📊</div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div style="padding:0 16px 16px">
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:16px 16px 10px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:14px;font-weight:700;color:var(--text)">Recent Transactions</span>
+          <span style="font-size:12px;font-weight:700;color:var(--teal);cursor:pointer" onclick="goto('catdetail');selCat(0)">View All ›</span>
+        </div>
+        <div class="txn" onclick="selTxn(0);goto('txndetail')">
+          <div class="av" style="width:40px;height:40px;font-size:14px;background:#FF6B35">S</div>
+          <div class="txn-info"><div class="txn-m">Swiggy Food Delivery</div><div class="txn-d">Apr 20 · UPI Google Pay</div></div>
+          <div class="txn-amt">₹485</div>
+        </div>
+        <div class="txn" onclick="selTxn(6);goto('txndetail')">
+          <div class="av" style="width:40px;height:40px;font-size:14px;background:#FF9900">A</div>
+          <div class="txn-info"><div class="txn-m">Amazon</div><div class="txn-d">Apr 15 · HDFC Credit Card</div></div>
+          <div class="txn-amt">₹3,200</div>
+        </div>
+        <div class="txn" onclick="selTxn(9);goto('txndetail')">
+          <div class="av" style="width:40px;height:40px;font-size:14px;background:#000">U</div>
+          <div class="txn-info"><div class="txn-m">Uber</div><div class="txn-d">Apr 20 · UPI Google Pay</div></div>
+          <div class="txn-amt">₹420</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- HDFC Bottom Nav -->
+  <div class="nav">
+    <button class="navbtn on"><span class="ni">🏠</span><span class="nl" style="color:var(--hdfc-red)">Home</span></button>
+    <button class="navbtn" onclick="toast('Coming soon')"><span class="ni">📷</span><span class="nl">Scan QR</span></button>
+    <button class="navbtn" onclick="toast('Coming soon')"><span class="ni">💬</span><span class="nl">Chat</span></button>
+    <button class="navbtn" onclick="toast('Coming soon')"><span class="ni">📋</span><span class="nl">Requests</span></button>
+    <button class="navbtn" onclick="toast('Coming soon')"><span class="ni">⋯</span><span class="nl">More</span></button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN: ONBOARDING
+══════════════════════════════════════ -->
+<div id="s-onboard" class="screen">
+  <div class="sb light"></div>
+  <div style="flex:1;display:flex;flex-direction:column;padding:24px 28px 32px">
+    <!-- Dots -->
+    <div style="display:flex;justify-content:center;gap:8px;margin-bottom:32px" id="onb-dots">
+      <div style="width:28px;height:8px;border-radius:4px;background:var(--teal);transition:all 0.3s" id="d0"></div>
+      <div style="width:8px;height:8px;border-radius:4px;background:var(--border);transition:all 0.3s" id="d1"></div>
+      <div style="width:8px;height:8px;border-radius:4px;background:var(--border);transition:all 0.3s" id="d2"></div>
+    </div>
+    <!-- Pages -->
+    <div id="onb0" class="onb-page active">
+      <div style="font-size:72px;margin-bottom:24px">🔒</div>
+      <div style="font-size:24px;font-weight:800;color:var(--text);line-height:1.3;margin-bottom:14px">Your spending,<br/>finally in one place</div>
+      <div style="font-size:14px;color:var(--text-sec);line-height:1.7">SpendSense reads your HDFC bank SMS alerts to automatically track all spending — UPI, credit cards, and more — in one intelligent dashboard.</div>
+      <div style="margin-top:20px;display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--teal-xlight);border-radius:var(--radius-sm);border:1px solid var(--teal-light)">
+        <span>🔐</span>
+        <span style="font-size:13px;font-weight:600;color:var(--teal)">Everything stays on your phone. No cloud. No passwords.</span>
+      </div>
+    </div>
+    <div id="onb1" class="onb-page">
+      <div style="font-size:72px;margin-bottom:24px">🤖</div>
+      <div style="font-size:24px;font-weight:800;color:var(--text);line-height:1.3;margin-bottom:14px">Ask anything with AI</div>
+      <div style="font-size:14px;color:var(--text-sec);line-height:1.7">Natural language queries powered by Claude AI. Just type <em>"How much did I spend on food this week?"</em> and get instant intelligent answers about your finances.</div>
+    </div>
+    <div id="onb2" class="onb-page">
+      <div style="font-size:72px;margin-bottom:24px">🎯</div>
+      <div style="font-size:24px;font-weight:800;color:var(--text);line-height:1.3;margin-bottom:14px">Smart savings goals,<br/>not just budgets</div>
+      <div style="font-size:14px;color:var(--text-sec);line-height:1.7">Set savings targets — not restrictive budgets. Get real-time alerts the moment you overspend in any category. See your money working for you.</div>
+    </div>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px">
+      <button class="btn primary" id="onb-next-btn" onclick="onbNext()">Continue →</button>
+      <button style="background:none;border:none;font-size:13px;color:var(--text-muted);cursor:pointer;padding:8px;font-family:var(--font)" onclick="goto('bank')">‹ Back to HDFC NetBanking</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN: HOME (SpendSense)
+══════════════════════════════════════ -->
+<div id="s-home" class="screen">
+  <div class="sb teal"><span>9:41</span><span style="font-size:13px;font-weight:800;letter-spacing:0.5px">SpendSense</span><span class="batt">100% 🔋</span></div>
+  <div class="bc">
+    <span class="bc-link" onclick="goto('bank')">‹ HDFC NetBanking</span>
+    <span class="bc-name">✨ Spend Overview</span>
+  </div>
+  <div class="scroll" style="background:var(--bg)">
+    <!-- Header -->
+    <div style="padding:16px 20px 0;display:flex;align-items:flex-start;justify-content:space-between" class="anim-up">
+      <div>
+        <div style="font-size:18px;font-weight:800;color:var(--text)">Morning, Dhruv 👋</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px">April 2026 · All payment methods</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;background:var(--teal-light);padding:6px 12px;border-radius:20px;cursor:pointer" onclick="goto('settings')">
+        <span style="font-size:12px">🔒</span>
+        <span style="font-size:11px;font-weight:700;color:var(--teal-dark)">On device</span>
+      </div>
+    </div>
+
+    <!-- Week/Month Toggle -->
+    <div style="display:flex;gap:8px;padding:14px 20px 0">
+      <button id="btn-wk" class="ptab on" onclick="setTab('week')">This Week</button>
+      <button id="btn-mo" class="ptab" onclick="setTab('month')">This Month</button>
+    </div>
+
+    <!-- Total Card -->
+    <div style="padding:12px 20px" class="anim-up" style="animation-delay:0.1s">
+      <div class="card teal-grad" style="padding:22px">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.65);letter-spacing:1.5px;text-transform:uppercase" id="tl-label">TOTAL SPENT THIS WEEK</div>
+        <div class="t-hero t-white" style="margin:6px 0 10px" id="tl-amount">₹18,400</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <span style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9);font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px" id="tl-change">↑ 8.2% vs last week</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.7)">Apr 20–26</span>
+        </div>
+        <!-- Quick stats -->
+        <div style="display:flex;gap:8px">
+          <div class="qstat">
+            <div style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:600">UPI</div>
+            <div style="font-size:15px;font-weight:800;color:white;font-family:var(--mono)">₹9,524</div>
+          </div>
+          <div class="qstat">
+            <div style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:600">Cards</div>
+            <div style="font-size:15px;font-weight:800;color:white;font-family:var(--mono)">₹8,876</div>
+          </div>
+          <div class="qstat">
+            <div style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:600">Txns</div>
+            <div style="font-size:15px;font-weight:800;color:white;font-family:var(--mono)">13</div>
+          </div>
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.8);margin-top:12px;display:flex;align-items:center;gap:6px">
+          <span>✓</span><span id="tl-saving">On track to save ₹22,000 this month</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Bars -->
+    <div style="padding:0 20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-size:15px;font-weight:700;color:var(--text)">Spending by Category</span>
+        <span style="font-size:12px;font-weight:700;color:var(--teal);cursor:pointer" onclick="goto('categories')">See all ›</span>
+      </div>
+      <div id="home-cats"></div>
+    </div>
+
+    <!-- Trend chips -->
+    <div style="padding:6px 20px 14px">
+      <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px" id="trend-chips">
+        <span class="pill amber">↑21% Food</span>
+        <span class="pill red">↑20% Shopping</span>
+        <span class="pill green">↓8% Transport</span>
+        <span class="pill teal">↑2% Bills</span>
+        <span class="pill grey">↓5% Entmt.</span>
+      </div>
+    </div>
+
+    <!-- NLP bar -->
+    <div style="padding:0 20px">
+      <div onclick="goto('nlp')" style="display:flex;align-items:center;gap:12px;padding:15px 18px;background:white;border:2px solid var(--teal-light);border-radius:var(--radius);cursor:pointer;transition:all 0.18s;box-shadow:var(--shadow-sm)" onmouseover="this.style.borderColor='var(--teal)';this.style.boxShadow='0 4px 16px rgba(11,110,110,0.15)'" onmouseout="this.style.borderColor='var(--teal-light)';this.style.boxShadow='var(--shadow-sm)'">
+        <div style="width:36px;height:36px;background:var(--teal-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🔍</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:var(--teal)">Ask SpendSense AI</div>
+          <div style="font-size:12px;color:var(--text-muted);font-style:italic">"Food spend this week?" · "Am I over budget?"</div>
+        </div>
+        <span class="pill teal" style="font-size:10px;flex-shrink:0">✨ AI</span>
+      </div>
+    </div>
+
+    <!-- Privacy -->
+    <div style="text-align:center;padding:16px;font-size:11px;color:var(--text-muted)">🔒 All data stays on your device · Never shared with HDFC or anyone</div>
+  </div>
+  <!-- Nav -->
+  <div class="nav">
+    <button class="navbtn on" onclick="goto('home')"><span class="ni">🏠</span><span class="nl" style="color:var(--teal)">Home</span></button>
+    <button class="navbtn" onclick="goto('categories')"><span class="ni">📊</span><span class="nl">Categories</span></button>
+    <button class="navbtn" onclick="goto('savings')"><span class="ni">💰</span><span class="nl">Savings</span></button>
+    <button class="navbtn" onclick="goto('nlp')"><span class="ni">🤖</span><span class="nl">Ask AI</span></button>
+    <button class="navbtn" onclick="goto('settings')"><span class="ni">⚙️</span><span class="nl">Settings</span></button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN: CATEGORIES
+══════════════════════════════════════ -->
+<div id="s-categories" class="screen">
+  <div class="sb teal"><span>9:41</span><span style="font-size:13px;font-weight:800">SpendSense</span><span class="batt">100% 🔋</span></div>
+  <div class="bk-hdr"><button class="bk-btn" onclick="goto('home')">‹</button><div><div style="font-size:16px;font-weight:800;color:var(--text)">All Categories</div><div style="font-size:12px;color:var(--text-muted)">Tap to view transactions</div></div></div>
+  <div class="scroll" style="padding:14px 20px 16px;background:var(--bg)" id="all-cats"></div>
+  <div class="nav">
+    <button class="navbtn" onclick="goto('home')"><span class="ni">🏠</span><span class="nl">Home</span></button>
+    <button class="navbtn on"><span class="ni">📊</span><span class="nl" style="color:var(--teal)">Categories</span></button>
+    <button class="navbtn" onclick="goto('savings')"><span class="ni">💰</span><span class="nl">Savings</span></button>
+    <button class="navbtn" onclick="goto('nlp')"><span class="ni">🤖</span><span class="nl">Ask AI</span></button>
+    <button class="navbtn" onclick="goto('settings')"><span class="ni">⚙️</span><span class="nl">Settings</span></button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN: CATEGORY DETAIL
+══════════════════════════════════════ -->
+<div id="s-catdetail" class="screen">
+  <div class="sb teal"><span>9:41</span><span id="cd-title-sb" style="font-size:13px;font-weight:800">Food &amp; Dining</span><span class="batt">100% 🔋</span></div>
+  <div class="bk-hdr">
+    <button class="bk-btn" id="cd-back">‹</button>
+    <div style="flex:1"><div style="font-size:16px;font-weight:800;color:var(--text)" id="cd-title">Food &amp; Dining</div><div style="font-size:12px;color:var(--text-muted)">Tap transaction for details</div></div>
+    <span style="font-size:26px" id="cd-icon">🍜</span>
+  </div>
+  <!-- Spent summary -->
+  <div style="padding:14px 20px 0">
+    <div class="card" style="padding:18px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px">
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Spent</div>
+          <div style="font-size:32px;font-weight:800;color:var(--teal);font-family:var(--mono)" id="cd-spent">₹6,500</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:12px;color:var(--text-muted)" id="cd-goal-txt">of ₹10,000 goal</div>
+          <div style="margin-top:5px" id="cd-badge"></div>
+        </div>
+      </div>
+      <div class="prog-wrap"><div class="prog-fill" id="cd-bar" style="width:65%;background:var(--green)"></div></div>
+    </div>
+  </div>
+  <div class="ptabs">
+    <button class="ptab on" onclick="setPTab(this)">Last 7 Days</button>
+    <button class="ptab" onclick="setPTab(this)">This Month</button>
+    <button class="ptab" onclick="toast('Custom range coming soon!')">Custom</button>
+  </div>
+  <div class="scroll" id="cd-txns"></div>
+  <div class="nav">
+    <button class="navbtn" onclick="goto('home')"><span class="ni">🏠</span><span class="nl">Home</span></button>
+    <button class="navbtn on"><span class="ni">📊</span><span class="nl" style="color:var(--teal)">Categories</span></button>
+    <button class="navbtn" onclick="goto('savings')"><span class="ni">💰</span><span class="nl">Savings</span></button>
+    <button class="navbtn" onclick="goto('nlp')"><span class="ni">🤖</span><span class="nl">Ask AI</span></button>
+    <button class="navbtn" onclick="goto('settings')"><span class="ni">⚙️</span><span class="nl">Settings</span></button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN: TRANSACTION DETAIL
+══════════════════════════════════════ -->
+<div id="s-txndetail" class="screen">
+  <div class="sb teal"><span>9:41</span><span style="font-size:13px;font-weight:800">Transaction</span><span class="batt">100% 🔋</span></div>
+  <div class="bk-hdr"><button class="bk-btn" onclick="goto('catdetail')">‹</button><div class="hdr-title" style="font-size:15px;font-weight:800;color:var(--text)">Transaction Details</div></div>
+  <div class="scroll" style="padding-bottom:16px">
+    <!-- Hero -->
+    <div style="text-align:center;padding:28px 20px 18px">
+      <div class="av" style="width:76px;height:76px;font-size:30px;margin:0 auto 14px" id="td-av"></div>
+      <div style="font-size:22px;font-weight:800;color:var(--text)" id="td-merchant">Swiggy</div>
+      <div style="font-size:40px;font-weight:800;color:var(--teal);margin:6px 0;font-family:var(--mono)" id="td-amount">₹485</div>
+      <div style="font-size:11px;color:var(--text-muted)" id="td-source">Detected from HDFC SMS · Apr 20</div>
+    </div>
+    <!-- Detail -->
+    <div style="margin:0 20px;border-radius:var(--radius);border:1.5px solid var(--border);overflow:hidden;background:white">
+      <div class="drow"><span class="dl">Date &amp; Time</span><span class="dv" id="td-date">Apr 20, 2026 · 8:45 PM</span></div>
+      <div class="drow"><span class="dl">Payment Method</span><span class="dv" id="td-method">UPI · Google Pay</span></div>
+      <div class="drow"><span class="dl">Category</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="pill teal" id="td-cat">Food &amp; Dining</span>
+          <span style="cursor:pointer;font-size:15px" onclick="toggleCP()">✏️</span>
+        </div>
+      </div>
+      <div class="drow"><span class="dl">Status</span><span class="pill green">✓ Confirmed</span></div>
+    </div>
+    <!-- Cat picker -->
+    <div id="cp-wrap" style="display:none;padding:0 20px 4px;margin-top:10px">
+      <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Change category</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px" id="cp-chips"></div>
+    </div>
+    <!-- Auto cat -->
+    <div style="margin:14px 20px;background:var(--amber-light);border:1.5px solid #fcd34d;border-radius:var(--radius);padding:16px">
+      <div style="font-size:13px;font-weight:700;color:#78350f;margin-bottom:12px;display:flex;align-items:center;gap:8px"><span>🤖</span>Auto-categorized — does this look right?</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn sm" style="background:var(--green-light);color:#065f46;border:1.5px solid #6ee7b7;flex:1;font-family:var(--font)" onclick="toast('✓ Category confirmed!')">✓ Yes, correct</button>
+        <button class="btn sm" style="background:var(--amber-light);color:#78350f;border:1.5px solid #fcd34d;flex:1;font-family:var(--font)" onclick="toggleCP()">✗ Change it</button>
+      </div>
+    </div>
+    <!-- Notes -->
+    <div style="padding:0 20px 14px">
+      <div class="inp-label">Notes</div>
+      <input class="inp" placeholder="Add a note (e.g. 'Dinner with team')" id="td-note"/>
+    </div>
+    <!-- Tag -->
+    <div style="padding:0 20px 14px">
+      <div class="inp-label">Tag this transaction</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="tag-chips">
+        <div class="cpc" onclick="selTag(this)">🎯 Planned</div>
+        <div class="cpc" onclick="selTag(this)">⚡ Impulse</div>
+        <div class="cpc" onclick="selTag(this)">👥 Split</div>
+        <div class="cpc" onclick="selTag(this)">🔄 Recurring</div>
+        <div class="cpc" onclick="selTag(this)">✅ Essential</div>
+      </div>
+    </div>
+    <!-- Split toggle -->
+    <div style="margin:0 20px 14px;background:var(--bg);border-radius:var(--radius);padding:16px;display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--border)">
+      <div><div style="font-size:14px;font-weight:700;color:var(--text)">Split expense</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px">Adjusts total for group payments</div></div>
+      <button class="tog off" onclick="togBtn(this)"></button>
+    </div>
+    <div style="text-align:center;font-size:12px;color:var(--green);padding:0 20px 8px;font-weight:600">🔒 Only you can see this. It never leaves your phone.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN: SAVINGS
+══════════════════════════════════════ -->
+<div id="s-savings" class="screen">
+  <div class="sb teal"><span>9:41</span><span style="font-size:13px;font-weight:800">SpendSense</span><span class="batt">100% 🔋</span></div>
+  <div style="padding:16px 20px 12px;border-bottom:1px solid var(--border);flex-shrink:0;background:white">
+    <div class="t-h1">Savings Goals</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-top:2px">Soft thresholds — not hard limits</div>
+  </div>
+  <div class="scroll" style="padding:20px;background:var(--bg)">
+    <!-- Ring -->
+    <div style="text-align:center;margin-bottom:22px;background:white;border-radius:var(--radius);padding:24px;border:1.5px solid var(--border);box-shadow:var(--shadow-sm)">
+      <div class="ring-wrap">
+        <svg class="ring-svg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="80" cy="80" r="64" fill="none" stroke="#E2E6EA" stroke-width="12"/>
+          <circle cx="80" cy="80" r="64" fill="none" stroke="url(#rg)" stroke-width="12" stroke-dasharray="259 402" stroke-dashoffset="100" stroke-linecap="round" id="ring-arc"/>
+          <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#0D6E6E"/><stop offset="100%" style="stop-color:#0B8F8F"/></linearGradient></defs>
+        </svg>
+        <div class="ring-center">
+          <div style="font-size:22px;font-weight:800;color:var(--teal);font-family:var(--mono)" id="ring-saved">₹14,200</div>
+          <div style="font-size:11px;color:var(--text-muted);font-weight:600">of ₹22,000 saved</div>
+          <div style="font-size:24px;margin-top:4px">🎯</div>
+        </div>
+      </div>
+      <div style="margin-top:14px">
+        <span class="pill green" style="font-size:12px">✓ You're on track!</span>
+        <div style="font-size:13px;color:var(--text-sec);margin-top:8px">₹7,800 remaining to hit ₹22,000 goal</div>
+      </div>
+    </div>
+    <!-- Category thresholds -->
+    <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px">Category Thresholds</div>
+    <div id="sav-cats"></div>
+    <!-- Insight -->
+    <div class="insight danger">
+      <span style="font-size:18px">⚠️</span>
+      <div><div style="font-weight:700;font-size:13px;margin-bottom:3px">Shopping Over Budget</div><div style="font-size:12px;line-height:1.55">You've spent ₹9,600 against a ₹8,000 goal. You're ₹1,600 over. Consider pausing discretionary shopping for the rest of the month.</div></div>
+    </div>
+    <button class="btn primary" onclick="toast('Goal adjustment — coming soon!')">Adjust All Goals</button>
+    <div style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:16px">🔒 Savings data stays on your device</div>
+  </div>
+  <div class="nav">
+    <button class="navbtn" onclick="goto('home')"><span class="ni">🏠</span><span class="nl">Home</span></button>
+    <button class="navbtn" onclick="goto('categories')"><span class="ni">📊</span><span class="nl">Categories</span></button>
+    <button class="navbtn on"><span class="ni">💰</span><span class="nl" style="color:var(--teal)">Savings</span></button>
+    <button class="navbtn" onclick="goto('nlp')"><span class="ni">🤖</span><span class="nl">Ask AI</span></button>
+    <button class="navbtn" onclick="goto('settings')"><span class="ni">⚙️</span><span class="nl">Settings</span></button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN: NLP / ASK AI
+══════════════════════════════════════ -->
+<div id="s-nlp" class="screen" style="display:flex;flex-direction:column">
+  <div class="sb teal"><span>9:41</span><span style="font-size:13px;font-weight:800">SpendSense</span><span class="batt">100% 🔋</span></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1.5px solid var(--border);flex-shrink:0;background:white">
+    <button style="background:var(--bg);border:1.5px solid var(--border);width:36px;height:36px;border-radius:10px;font-size:16px;cursor:pointer" onclick="goto('home')">✕</button>
+    <div style="text-align:center">
+      <div style="font-size:16px;font-weight:800;color:var(--teal)">✨ Ask SpendSense AI</div>
+      <div style="font-size:11px;color:var(--text-muted)">Powered by Claude · responses in seconds</div>
+    </div>
+    <div style="width:36px"></div>
+  </div>
+  <div class="chip-row">
+    <div class="chip" onclick="sendChip('How much did I spend on food this week?')">🍜 Food this week?</div>
+    <div class="chip" onclick="sendChip('Am I over budget anywhere?')">⚠️ Over budget?</div>
+    <div class="chip" onclick="sendChip('What was my biggest transaction this month?')">💰 Biggest transaction?</div>
+    <div class="chip" onclick="sendChip('How much did I spend via UPI vs credit card?')">📱 UPI vs Card?</div>
+    <div class="chip" onclick="sendChip('Am I on track with my savings goal?')">🎯 Savings status?</div>
+    <div class="chip" onclick="sendChip('What is my total spend this month?')">📊 Monthly total?</div>
+  </div>
+  <div class="scroll" id="chat-area" style="flex:1;padding:14px 20px;display:flex;flex-direction:column;gap:4px"></div>
+  <div class="nlp-row">
+    <input class="nlp-inp" id="nlp-inp" placeholder="Ask about your spending…" onkeydown="if(event.key==='Enter')sendNLP()"/>
+    <button class="nlp-send" onclick="sendNLP()">↑</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN: SETTINGS
+══════════════════════════════════════ -->
+<div id="s-settings" class="screen">
+  <div class="sb teal"><span>9:41</span><span style="font-size:13px;font-weight:800">SpendSense</span><span class="batt">100% 🔋</span></div>
+  <div style="padding:16px 20px;border-bottom:1px solid var(--border);font-size:22px;font-weight:800;color:var(--text);flex-shrink:0;background:white">Settings</div>
+  <div class="scroll" style="background:var(--bg)">
+
+    <div class="sec-hdr">Data Sources &amp; Privacy</div>
+    <div style="margin:0 16px;border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border);background:white;box-shadow:var(--shadow-sm)">
+      <div class="set-row"><div><div class="st">SMS Access</div><div class="ss">Detect transactions from HDFC SMS</div></div><button class="tog on" onclick="togBtn(this)"></button></div>
+      <div class="set-row"><div><div class="st">Email Receipt Scanning</div><div class="ss">Scan Gmail for receipts</div></div><button class="tog off" onclick="togBtn(this)"></button></div>
+      <div class="set-row" onclick="goto('paymentmethods')"><div><div class="st">Connected Payment Methods</div><div class="ss">3 UPI · 2 Credit · 1 Debit</div></div><span style="color:var(--text-muted);font-size:18px">›</span></div>
+      <div class="set-row"><div><div class="st">Privacy Masking</div><div class="ss">Blur amounts when others might see</div></div><button class="tog off" id="tog-privacy" onclick="togBtn(this)"></button></div>
+      <div class="set-row"><div><div class="st">App Lock</div><div class="ss">PIN / Biometric authentication</div></div><button class="tog off" onclick="togBtn(this)"></button></div>
+    </div>
+
+    <div class="sec-hdr">Notifications</div>
+    <div style="margin:0 16px;border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border);background:white;box-shadow:var(--shadow-sm)">
+      <div class="set-row"><div><div class="st">Spending Alerts</div><div class="ss">Notify after each transaction</div></div><button class="tog on" onclick="togBtn(this)"></button></div>
+      <div class="set-row"><div><div class="st">Weekly Summary</div><div class="ss">Every Sunday 9 AM</div></div><button class="tog on" onclick="togBtn(this)"></button></div>
+      <div class="set-row"><div><div class="st">Over-Budget Alerts</div><div class="ss">Instant alert when category exceeds goal</div></div><button class="tog on" onclick="togBtn(this)"></button></div>
+    </div>
+
+    <div class="sec-hdr">AI Assistant</div>
+    <div style="margin:0 16px;border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border);background:white;box-shadow:var(--shadow-sm)">
+      <div class="set-row"><div><div class="st">Smart Insights</div><div class="ss">AI-powered weekly spending insights</div></div><button class="tog on" onclick="togBtn(this)"></button></div>
+      <div class="set-row" onclick="goto('nlp')"><div><div class="st">Open AI Assistant</div><div class="ss">Ask questions about your spending</div></div><span style="color:var(--text-muted);font-size:18px">›</span></div>
+    </div>
+
+    <div class="sec-hdr">About</div>
+    <div style="margin:0 16px 16px;background:var(--teal-xlight);border-radius:var(--radius);padding:18px;border:1.5px solid var(--teal-light);box-shadow:var(--shadow-sm)">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <span style="font-size:22px">🔒</span>
+        <div style="font-size:13px;color:var(--teal-dark);line-height:1.65;font-weight:500">Your data never leaves this device. No cloud sync. No ads. No data selling. SpendSense reads only your HDFC bank SMS — locally on your phone.</div>
+      </div>
+      <div style="margin-top:14px;font-size:11px;color:var(--text-muted);text-align:center">SpendSense v1.0 · Built for CS 6750 · Georgia Tech</div>
+    </div>
+
+  </div>
+  <div class="nav">
+    <button class="navbtn" onclick="goto('home')"><span class="ni">🏠</span><span class="nl">Home</span></button>
+    <button class="navbtn" onclick="goto('categories')"><span class="ni">📊</span><span class="nl">Categories</span></button>
+    <button class="navbtn" onclick="goto('savings')"><span class="ni">💰</span><span class="nl">Savings</span></button>
+    <button class="navbtn" onclick="goto('nlp')"><span class="ni">🤖</span><span class="nl">Ask AI</span></button>
+    <button class="navbtn on"><span class="ni">⚙️</span><span class="nl" style="color:var(--teal)">Settings</span></button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN: PAYMENT METHODS
+══════════════════════════════════════ -->
+<div id="s-paymentmethods" class="screen">
+  <div class="sb teal"><span>9:41</span><span style="font-size:13px;font-weight:800">SpendSense</span><span class="batt">100% 🔋</span></div>
+  <div class="bk-hdr"><button class="bk-btn" onclick="goto('settings')">‹</button><div><div style="font-size:16px;font-weight:800;color:var(--text)">Payment Methods</div><div style="font-size:12px;color:var(--text-muted)">Auto-detected from SMS alerts</div></div></div>
+  <div class="scroll" style="background:var(--bg)">
+    <div style="margin:14px 16px;background:var(--teal-xlight);border-radius:var(--radius-sm);padding:13px;border:1px solid var(--teal-light);font-size:12px;color:var(--teal-dark);line-height:1.55;font-weight:500">
+      🔒 We only read SMS confirmations from HDFC. We never store your bank passwords, OTPs, or PINs.
+    </div>
+    <div class="sec-hdr">UPI Apps</div>
+    <div style="margin:0 16px;border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border);background:white;box-shadow:var(--shadow-sm)">
+      <div class="pm-row"><div class="av" style="width:44px;height:44px;font-size:16px;background:#4285F4">G</div><div class="pm-info"><div class="pm-n">Google Pay</div><div class="pm-h">....@okaxis · HDFC linked</div></div><span class="pill green">Active</span></div>
+      <div class="pm-row"><div class="av" style="width:44px;height:44px;font-size:16px;background:#5f259f">P</div><div class="pm-info"><div class="pm-n">PhonePe</div><div class="pm-h">....@ybl · SBI linked</div></div><span class="pill green">Active</span></div>
+      <div class="pm-row"><div class="av" style="width:44px;height:44px;font-size:16px;background:#00BAF2">P</div><div class="pm-info"><div class="pm-n">Paytm</div><div class="pm-h">....@paytm · Not detected</div></div><span class="pill grey">Inactive</span></div>
+    </div>
+    <div class="sec-hdr">Credit Cards</div>
+    <div style="margin:0 16px;border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border);background:white;box-shadow:var(--shadow-sm)">
+      <div class="pm-row"><div class="av" style="width:44px;height:44px;font-size:14px;background:var(--hdfc-red)">H</div><div class="pm-info"><div class="pm-n">HDFC Bank</div><div class="pm-h">Credit ····4567 · Millennia</div></div><span class="pill green">Active</span></div>
+      <div class="pm-row"><div class="av" style="width:44px;height:44px;font-size:14px;background:#F58220">I</div><div class="pm-info"><div class="pm-n">ICICI Bank</div><div class="pm-h">Credit ····8901 · Sapphiro</div></div><span class="pill green">Active</span></div>
+    </div>
+    <div class="sec-hdr">Debit Cards</div>
+    <div style="margin:0 16px;border-radius:var(--radius);overflow:hidden;border:1.5px solid var(--border);background:white;box-shadow:var(--shadow-sm)">
+      <div class="pm-row"><div class="av" style="width:44px;height:44px;font-size:14px;background:#0033A0">S</div><div class="pm-info"><div class="pm-n">SBI Debit</div><div class="pm-h">Debit ····2341 · Classic</div></div><span class="pill green">Active</span></div>
+    </div>
+    <div style="padding:16px 16px"><button class="btn outline" style="font-size:13px">+ Add Payment Method</button></div>
+  </div>
+</div>
+
+</div><!-- /phone -->
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+const CATS = [
+  { name:'Food & Dining',     spent:6500,  goal:10000, icon:'🍜', weekly:2800, color:'#0B6E6E' },
+  { name:'Shopping',          spent:9600,  goal:8000,  icon:'🛍️', weekly:5200, color:'#DC2626' },
+  { name:'Transport',         spent:3200,  goal:5000,  icon:'🚗', weekly:1400, color:'#0B6E6E' },
+  { name:'Bills & Utilities', spent:4300,  goal:5000,  icon:'⚡', weekly:999,  color:'#E8960A' },
+  { name:'Entertainment',     spent:900,   goal:5000,  icon:'🎬', weekly:649,  color:'#0B6E6E' },
+];
+
+const TXNS = [
+  { id:0,  m:'Swiggy Food Delivery', amt:485,  date:'Apr 20',time:'8:45 PM',  method:'UPI · Google Pay',    cat:'Food & Dining',     col:'#FF6B35',ini:'S' },
+  { id:1,  m:'Zomato',               amt:720,  date:'Apr 18',time:'1:15 PM',  method:'HDFC Credit Card',    cat:'Food & Dining',     col:'#E23744',ini:'Z' },
+  { id:2,  m:'Vikas Enterprises',    amt:340,  date:'Apr 17',time:'7:30 PM',  method:'UPI · PhonePe',       cat:'Food & Dining',     col:'#5F6CAF',ini:'V' },
+  { id:3,  m:'BigBasket',            amt:1850, date:'Apr 20',time:'11:00 AM', method:'UPI · Google Pay',    cat:'Food & Dining',     col:'#84C225',ini:'B' },
+  { id:4,  m:'JioMart',              amt:920,  date:'Apr 19',time:'3:45 PM',  method:'UPI · Google Pay',    cat:'Food & Dining',     col:'#0058A3',ini:'J' },
+  { id:5,  m:'Blinkit',              amt:640,  date:'Apr 18',time:'6:20 PM',  method:'UPI · Google Pay',    cat:'Food & Dining',     col:'#FFD600',ini:'B' },
+  { id:6,  m:'Amazon',               amt:3200, date:'Apr 15',time:'2:10 PM',  method:'HDFC Credit Card',    cat:'Shopping',          col:'#FF9900',ini:'A' },
+  { id:7,  m:'Myntra',               amt:2800, date:'Apr 12',time:'9:00 AM',  method:'ICICI Credit Card',   cat:'Shopping',          col:'#FF3366',ini:'M' },
+  { id:8,  m:'Flipkart',             amt:3600, date:'Apr 10',time:'5:30 PM',  method:'HDFC Credit Card',    cat:'Shopping',          col:'#2874F0',ini:'F' },
+  { id:9,  m:'Uber',                 amt:420,  date:'Apr 20',time:'9:15 AM',  method:'UPI · Google Pay',    cat:'Transport',         col:'#000000',ini:'U' },
+  { id:10, m:'Petrol — HP Station',  amt:3500, date:'Apr 16',time:'10:00 AM', method:'HDFC Credit Card',    cat:'Transport',         col:'#0033A0',ini:'P' },
+  { id:11, m:'Airtel Broadband',     amt:999,  date:'Apr 5', time:'12:00 PM', method:'UPI · Google Pay',    cat:'Bills & Utilities', col:'#ED1C24',ini:'A' },
+  { id:12, m:'Netflix',              amt:649,  date:'Apr 3', time:'1:00 AM',  method:'HDFC Credit Card',    cat:'Entertainment',     col:'#E50914',ini:'N' },
+];
+
+const SPEND_CONTEXT = `
+User: Dhruv Jain, HDFC Bank customer, April 2026.
+WEEKLY SPENDING (Apr 20-26): Total ₹18,400 (↑8.2% vs last week)
+MONTHLY SPENDING (April 2026): Total ₹47,277 (↑42.8% vs March ₹33,100)
+CATEGORIES (monthly): Food & Dining ₹6,500/₹10,000 goal (65%), Shopping ₹9,600/₹8,000 goal (120% OVER by ₹1,600), Transport ₹3,200/₹5,000 (64%), Bills & Utilities ₹4,300/₹5,000 (86%), Entertainment ₹900/₹5,000 (18%)
+PAYMENT METHODS: UPI ₹10,924 (8 txns), Cards ₹14,749 (5 txns), HDFC Credit Card used most
+TOP TRANSACTIONS: Flipkart ₹3,600, Amazon ₹3,200, Petrol HP ₹3,500, Myntra ₹2,800, BigBasket ₹1,850
+SAVINGS GOAL: ₹22,000/month, saved ₹14,200 so far (64.5%), ON TRACK
+WEEKLY BREAKDOWN: Food ₹2,800, Shopping ₹5,200, Transport ₹1,400, Bills ₹999, Entertainment ₹649
+DAILY AVERAGE: ₹1,576/day
+`;
+
+// ═══════════════════════════════════════════════════════════
+// STATE (persisted in localStorage)
+// ═══════════════════════════════════════════════════════════
+const LS = {
+  get: k => { try { return JSON.parse(localStorage.getItem('ss_'+k)); } catch(e) { return null; } },
+  set: (k,v) => { try { localStorage.setItem('ss_'+k, JSON.stringify(v)); } catch(e) {} },
+};
+
+let chatHistory = LS.get('chat') || [
+  { from:'user', text:'How much did I spend on food this week?' },
+  { from:'app',  text:'You spent **₹2,800** on Food & Dining this week across 4 transactions. Your biggest spend was BigBasket at ₹1,850. Monthly total: ₹6,500 — 65% of your ₹10,000 goal. You\'re well within budget! ✅' },
+  { from:'user', text:'Am I over budget anywhere?' },
+  { from:'app',  text:'Yes — **Shopping** is over budget. You\'ve spent ₹9,600 against a ₹8,000 monthly goal — that\'s 120% or ₹1,600 over. All other categories are within limits. 🛍️⚠️' },
+];
+let notes = LS.get('notes') || {};
+let tags = LS.get('tags') || {};
+let toggles = LS.get('toggles') || {};
+let hasOnboarded = LS.get('onboarded') || false;
+let activeTab = 'week';
+let selCatIdx = 0;
+let selTxnIdx = 0;
+let cdBackSrc = 'home';
+let onbStep = 0;
+let nlpLoading = false;
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+const fmt = n => '₹' + n.toLocaleString('en-IN');
+const pct = (s,g) => Math.min(Math.round(s/g*100),100);
+const barCol = (s,g) => s>g ? 'var(--red)' : s/g>0.85 ? 'var(--amber)' : 'var(--green)';
+const pill = (s,g) => {
+  if(s>g) return `<span class="pill red">OVER BUDGET</span>`;
+  if(s/g>0.85) return `<span class="pill amber">${pct(s,g)}%</span>`;
+  return `<span class="pill green">${pct(s,g)}%</span>`;
+};
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function goto(id) {
+  document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); });
+  const el = document.getElementById('s-'+id);
+  if (!el) return;
+  el.classList.add('active');
+  if(id==='home') renderHomeCats();
+  if(id==='categories') renderAllCats();
+  if(id==='catdetail') renderCatDetail();
+  if(id==='savings') renderSavCats();
+  if(id==='nlp') { renderChat(); setTimeout(()=>{ const i=document.getElementById('nlp-inp'); if(i) i.focus(); },300); }
+}
+
+function showLoad(msg, cb) {
+  const ov = document.getElementById('ldo');
+  document.getElementById('ld-msg').textContent = msg;
+  ov.classList.remove('h');
+  setTimeout(()=>{ ov.classList.add('h'); cb(); }, 800);
+}
+
+// ═══════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════
+let toastTimer;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.remove('h');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.add('h'), 2200);
+}
+
+// ═══════════════════════════════════════════════════════════
+// ONBOARDING
+// ═══════════════════════════════════════════════════════════
+function startOnboard() {
+  if(hasOnboarded) { showLoad('Loading Spend Overview…', ()=>goto('home')); return; }
+  onbStep = 0;
+  updateOnbDots();
+  goto('onboard');
+}
+
+function onbNext() {
+  if(onbStep < 2) {
+    document.getElementById('onb'+onbStep).classList.remove('active');
+    onbStep++;
+    document.getElementById('onb'+onbStep).classList.add('active');
+    updateOnbDots();
+    if(onbStep===2) document.getElementById('onb-next-btn').textContent = 'Get Started →';
+  } else {
+    hasOnboarded = true;
+    LS.set('onboarded', true);
+    showLoad('Setting up your dashboard…', ()=>goto('home'));
+  }
+}
+
+function updateOnbDots() {
+  for(let i=0;i<3;i++) {
+    const d = document.getElementById('d'+i);
+    if(d) { d.style.width = i===onbStep ? '28px':'8px'; d.style.background = i===onbStep ? 'var(--teal)':'var(--border)'; }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// TAB TOGGLE
+// ═══════════════════════════════════════════════════════════
+function setTab(t) {
+  activeTab = t;
+  document.getElementById('btn-wk').classList.toggle('on', t==='week');
+  document.getElementById('btn-mo').classList.toggle('on', t==='month');
+  if(t==='week') {
+    document.getElementById('tl-label').textContent = 'TOTAL SPENT THIS WEEK';
+    document.getElementById('tl-amount').textContent = '₹18,400';
+    document.getElementById('tl-change').textContent = '↑ 8.2% vs last week';
+    document.getElementById('tl-saving').textContent = 'On track to save ₹22,000 this month';
+  } else {
+    document.getElementById('tl-label').textContent = 'TOTAL SPENT THIS MONTH';
+    document.getElementById('tl-amount').textContent = '₹47,277';
+    document.getElementById('tl-change').textContent = '↑ 42.8% vs March 2026';
+    document.getElementById('tl-saving').textContent = 'April 2026 · Daily avg ₹1,576';
+  }
+  renderHomeCats();
+}
+
+// ═══════════════════════════════════════════════════════════
+// CAT BAR HTML
+// ═══════════════════════════════════════════════════════════
+function catRowHTML(c, idx, from) {
+  const s = activeTab==='week' ? c.weekly : c.spent;
+  const g = c.goal;
+  const w = pct(s,g);
+  const over = s>g;
+  return `<div class="cat-row${over?' over':''}" onclick="selCat(${idx},'${from}');goto('catdetail')">
+    <span style="font-size:22px;flex-shrink:0">${c.icon}</span>
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+        <span style="font-size:13px;font-weight:700;color:var(--text)">${c.name}</span>
+        <span style="font-size:14px;font-weight:800;color:var(--teal);font-family:var(--mono)">${fmt(s)}</span>
+      </div>
+      <div class="prog-wrap"><div class="prog-fill" style="width:${w}%;background:${barCol(s,g)}"></div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:5px">
+        <span style="font-size:11px;color:var(--text-muted)">${fmt(s)} of ${fmt(g)} goal</span>
+        ${pill(s,g)}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderHomeCats() {
+  const el = document.getElementById('home-cats');
+  if(el) el.innerHTML = CATS.map((c,i)=>catRowHTML(c,i,'home')).join('');
+}
+function renderAllCats() {
+  const el = document.getElementById('all-cats');
+  if(el) el.innerHTML = CATS.map((c,i)=>catRowHTML(c,i,'categories')).join('');
+}
+function selCat(i, from) {
+  selCatIdx = i;
+  cdBackSrc = from||'home';
+  document.getElementById('cd-back').onclick = ()=>goto(cdBackSrc);
+}
+
+// ═══════════════════════════════════════════════════════════
+// CATEGORY DETAIL
+// ═══════════════════════════════════════════════════════════
+function renderCatDetail() {
+  const c = CATS[selCatIdx];
+  document.getElementById('cd-title').textContent = c.name;
+  document.getElementById('cd-title-sb').textContent = c.name;
+  document.getElementById('cd-icon').textContent = c.icon;
+  document.getElementById('cd-spent').textContent = fmt(c.spent);
+  document.getElementById('cd-goal-txt').textContent = `of ${fmt(c.goal)} goal`;
+  document.getElementById('cd-badge').innerHTML = pill(c.spent,c.goal);
+  const bar = document.getElementById('cd-bar');
+  bar.style.width = pct(c.spent,c.goal)+'%';
+  bar.style.background = barCol(c.spent,c.goal);
+  const txns = TXNS.filter(t=>t.cat===c.name);
+  const container = document.getElementById('cd-txns');
+  if(!txns.length) { container.innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--text-muted);font-size:14px">No transactions found</div>'; return; }
+  container.innerHTML = txns.map(t=>`
+    <div class="txn" onclick="selTxn(${t.id});goto('txndetail')">
+      <div class="av" style="width:44px;height:44px;font-size:16px;background:${t.col}">${t.ini}</div>
+      <div class="txn-info">
+        <div class="txn-m">${t.m}</div>
+        <div class="txn-d">${t.date} · ${t.method}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="txn-amt">${fmt(t.amt)}</div>
+        <span class="pill teal" style="font-size:9px;margin-top:3px">${t.cat.split(' ')[0]}</span>
+      </div>
+      <span style="color:var(--text-muted);font-size:18px;margin-left:4px">›</span>
+    </div>`).join('');
+}
+
+function setPTab(el) {
+  document.querySelectorAll('#s-catdetail .ptab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// ═══════════════════════════════════════════════════════════
+// TRANSACTION DETAIL
+// ═══════════════════════════════════════════════════════════
+function selTxn(id) {
+  selTxnIdx = id;
+  const t = TXNS[id];
+  const av = document.getElementById('td-av');
+  av.style.background = t.col;
+  av.style.width = '76px'; av.style.height = '76px'; av.style.fontSize = '30px';
+  av.textContent = t.ini;
+  document.getElementById('td-merchant').textContent = t.m;
+  document.getElementById('td-amount').textContent = fmt(t.amt);
+  document.getElementById('td-source').textContent = `Detected from HDFC SMS · ${t.date}`;
+  document.getElementById('td-date').textContent = `${t.date}, 2026 · ${t.time}`;
+  document.getElementById('td-method').textContent = t.method;
+  document.getElementById('td-cat').textContent = t.cat;
+  const noteEl = document.getElementById('td-note');
+  noteEl.value = notes[id]||'';
+  noteEl.oninput = ()=>{ notes[id]=noteEl.value; LS.set('notes',notes); };
+  document.getElementById('cp-wrap').style.display='none';
+  renderCatPicker(t.cat);
+  renderTagChips(id);
+}
+
+function renderCatPicker(cur) {
+  const catNames = ['Food & Dining','Transport','Shopping','Bills & Utilities','Entertainment','Health','Education','Other'];
+  document.getElementById('cp-chips').innerHTML = catNames.map(n=>
+    `<div class="cpc${n===cur?' sel':''}" onclick="pickCat('${n}',this)">${n}</div>`).join('');
+}
+
+function pickCat(cat, el) {
+  document.querySelectorAll('#cp-chips .cpc').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('td-cat').textContent = cat;
+  toast(`Category → ${cat}`);
+  setTimeout(()=>{ document.getElementById('cp-wrap').style.display='none'; },600);
+}
+
+function toggleCP() {
+  const w = document.getElementById('cp-wrap');
+  w.style.display = w.style.display==='none' ? 'block':'none';
+}
+
+function renderTagChips(id) {
+  const saved = tags[id]||'';
+  document.querySelectorAll('#tag-chips .cpc').forEach(c=>{
+    c.classList.toggle('sel', c.textContent===saved);
+  });
+}
+
+function selTag(el) {
+  document.querySelectorAll('#tag-chips .cpc').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  tags[selTxnIdx] = el.textContent;
+  LS.set('tags',tags);
+  toast('Tagged: '+el.textContent);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SAVINGS
+// ═══════════════════════════════════════════════════════════
+function renderSavCats() {
+  document.getElementById('sav-cats').innerHTML = CATS.map(c=>`
+    <div style="background:white;border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;box-shadow:var(--shadow-sm)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:9px"><span style="font-size:20px">${c.icon}</span><span style="font-size:13px;font-weight:700;color:var(--text)">${c.name}</span></div>
+        <div style="display:flex;align-items:center;gap:8px">${pill(c.spent,c.goal)}<span style="font-size:12px;font-weight:700;color:var(--teal);cursor:pointer" onclick="toast('Adjust ${c.name} goal')">Adjust</span></div>
+      </div>
+      <div class="prog-wrap"><div class="prog-fill" style="width:${pct(c.spent,c.goal)}%;background:${barCol(c.spent,c.goal)}"></div></div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:6px;display:flex;justify-content:space-between"><span>${fmt(c.spent)} spent</span><span>${fmt(c.goal)} goal</span></div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// TOGGLE BUTTONS
+// ═══════════════════════════════════════════════════════════
+function togBtn(el) {
+  el.classList.toggle('on');
+  el.classList.toggle('off');
+  const key = el.id||Math.random().toString(36).slice(2);
+  toggles[key] = el.classList.contains('on');
+  LS.set('toggles',toggles);
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHAT RENDER
+// ═══════════════════════════════════════════════════════════
+function md(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\n/g,'<br/>');
+}
+
+function renderChat() {
+  const area = document.getElementById('chat-area');
+  if(!area) return;
+  area.innerHTML = chatHistory.map(m=>{
+    if(m.from==='user') return `<div class="cbubble user">${m.text}</div>`;
+    return `<div style="align-self:flex-start;max-width:88%"><div class="chat-meta">SPENDSENSE AI 🟢</div><div class="cbubble app">${md(m.text)}</div></div>`;
+  }).join('');
+  setTimeout(()=>{ area.scrollTop=area.scrollHeight; },60);
+}
+
+// ═══════════════════════════════════════════════════════════
+// NLP — REAL LLM CALL
+// ═══════════════════════════════════════════════════════════
+async function sendNLP() {
+  const inp = document.getElementById('nlp-inp');
+  const text = inp.value.trim();
+  if(!text || nlpLoading) return;
+  inp.value='';
+  chatHistory.push({ from:'user', text });
+  LS.set('chat', chatHistory);
+  renderChat();
+
+  // Show typing indicator
+  nlpLoading = true;
+  const area = document.getElementById('chat-area');
+  const typingId = 'typing-'+Date.now();
+  const typingEl = document.createElement('div');
+  typingEl.id = typingId;
+  typingEl.style.alignSelf='flex-start';
+  typingEl.innerHTML = `<div class="chat-meta">SPENDSENSE AI 🟢</div><div class="cbubble app"><div class="nlp-loading"><div class="nlp-dot"></div><div class="nlp-dot"></div><div class="nlp-dot"></div></div></div>`;
+  area.appendChild(typingEl);
+  area.scrollTop = area.scrollHeight;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:400,
+        system:`You are SpendSense AI, a friendly and concise financial assistant embedded inside the HDFC bank app. You have access to the user's spending data below. Answer questions about their spending in a helpful, conversational way. Be specific with numbers. Use **bold** for key amounts. Keep responses under 4 sentences. Never make up data not in the context.\n\nSPENDING DATA:\n${SPEND_CONTEXT}`,
+        messages:[{ role:'user', content: text }]
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.filter(b=>b.type==='text')?.map(b=>b.text)?.join('') || 'Sorry, I couldn\'t process that. Please try again.';
+    typingEl.remove();
+    chatHistory.push({ from:'app', text:reply });
+    LS.set('chat', chatHistory);
+    renderChat();
+  } catch(e) {
+    typingEl.remove();
+    const fallback = getFallbackReply(text.toLowerCase());
+    chatHistory.push({ from:'app', text:fallback });
+    LS.set('chat', chatHistory);
+    renderChat();
+  }
+  nlpLoading = false;
+}
+
+function getFallbackReply(q) {
+  if(q.includes('food')||q.includes('dining')||q.includes('eat')) return 'You spent **₹6,500** on Food & Dining this month (65% of ₹10,000 goal). Weekly: **₹2,800**. BigBasket (₹1,850) was your biggest food spend.';
+  if(q.includes('budget')||q.includes('over')||q.includes('exceed')) return '**Shopping** is over budget by ₹1,600 — spent ₹9,600 vs ₹8,000 goal (120%). All other categories are within limits ✅';
+  if(q.includes('biggest')||q.includes('largest')||q.includes('most')) return 'Your biggest transaction this month was **Flipkart ₹3,600** on Apr 10, paid via HDFC Credit Card.';
+  if(q.includes('upi')||q.includes('card')) return 'UPI payments: **₹10,924** (8 transactions). Card payments: **₹14,749** (5 transactions). Cards account for 57% of total spend.';
+  if(q.includes('sav')||q.includes('goal')||q.includes('track')) return 'You\'ve saved **₹14,200** of your ₹22,000 monthly goal — 64.5% complete. With ~10 days left in April, you\'re on track! 🎯';
+  if(q.includes('total')||q.includes('month')||q.includes('much')) return 'April 2026: **₹47,277** total (↑42.8% vs March ₹33,100). This week: **₹18,400**. Daily avg: ₹1,576.';
+  return 'I can help with questions about your spending categories, budgets, payment methods, or savings goals. What would you like to know?';
+}
+
+function sendChip(text) {
+  document.getElementById('nlp-inp').value = text;
+  sendNLP();
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+renderHomeCats();
+renderAllCats();
+renderSavCats();
+renderChat();
+
+// Restore saved toggle states
+document.querySelectorAll('.tog').forEach(t => {
+  if(t.id && toggles[t.id] !== undefined) {
+    if(toggles[t.id]) { t.classList.add('on'); t.classList.remove('off'); }
+    else { t.classList.add('off'); t.classList.remove('on'); }
+  }
+});
+
+// Animate bars on load
+setTimeout(()=>{
+  document.querySelectorAll('.prog-fill').forEach(b=>{ const w=b.style.width; b.style.width='0'; setTimeout(()=>b.style.width=w,50); });
+},200);
+</script>
+</body>
+</html>
