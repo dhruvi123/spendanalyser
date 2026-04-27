@@ -9,6 +9,7 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
   --hdfc-red:#C41E3A;--hdfc-red-dark:#9B1530;--hdfc-red-light:#FEE2E2;
+  --hdfc-blue:#003087;--hdfc-blue-dark:#00205c;--hdfc-blue-mid:#1a4fa0;--hdfc-blue-light:#e8eef8;
   --teal:#0B6E6E;--teal-dark:#084F4F;--teal-mid:#0D7F7F;--teal-light:#E0F5F5;--teal-xlight:#F0FAFA;
   --amber:#E8960A;--amber-light:#FEF3C7;
   --green:#0C9E5C;--green-light:#D1FAE5;
@@ -36,7 +37,7 @@ body{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-
 
 /* STATUS BAR */
 .sb{height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;flex-shrink:0;font-size:15px;font-weight:600}
-.sb.dark{background:var(--hdfc-red);color:white}
+.sb.dark{background:var(--hdfc-blue);color:white}
 .sb.light{background:var(--white);color:var(--text);border-bottom:1px solid var(--border)}
 .sb.teal{background:var(--teal-dark);color:white}
 .sb .batt{font-size:12px;display:flex;align-items:center;gap:3px}
@@ -205,15 +206,28 @@ body{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-
 @keyframes nd{0%,60%,100%{transform:scale(0.6);opacity:0.4}30%{transform:scale(1);opacity:1}}
 
 /* HDFC SPECIFIC */
-.hdfc-hdr{background:var(--hdfc-red);padding:12px 20px 0}
+.hdfc-hdr{background:var(--hdfc-blue);padding:12px 20px 0}
 .hdfc-menu{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.hdfc-tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:0}
+.hdfc-tabs{display:flex;gap:0;overflow-x:auto;padding-bottom:0;border-bottom:none}
 .hdfc-tabs::-webkit-scrollbar{display:none}
-.htab{white-space:nowrap;padding:8px 16px;border-radius:10px 10px 0 0;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);border:none;transition:all 0.15s}
-.htab.on{background:var(--white);color:var(--hdfc-red)}
-.htab.off{background:transparent;color:rgba(255,255,255,0.8)}
-.htab.new{background:rgba(255,255,255,0.15);color:white;border:1.5px solid rgba(255,255,255,0.4)}
+.htab{white-space:nowrap;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);border:none;transition:all 0.15s;letter-spacing:0.3px}
+.htab.on{background:var(--white);color:var(--hdfc-blue);border-radius:0;position:relative}
+.htab.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:40%;height:3px;background:var(--hdfc-blue);border-radius:2px 2px 0 0}
+.htab.off{background:transparent;color:rgba(255,255,255,0.75)}
+.htab.new{background:rgba(255,255,255,0.18);color:white;border:1.5px solid rgba(255,255,255,0.45);border-radius:20px;padding:6px 14px;margin-left:6px;margin-bottom:8px}
 .htab.new::before{content:'✨ ';font-size:11px}
+/* Quick service icon */
+.qs3-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.qs3-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;cursor:pointer;transition:background 0.15s;border-radius:10px}
+.qs3-item:active{background:var(--bg)}
+.qs3-icon{width:56px;height:56px;border-radius:50%;border:1.5px solid #dde3ec;display:flex;align-items:center;justify-content:center;font-size:24px;background:white}
+.qs3-label{font-size:11px;color:#444c5e;text-align:center;font-weight:600;line-height:1.3}
+/* Due Bills */
+.due-bills-section{background:#f5f6f7;padding:14px 16px 6px;margin-top:4px}
+.due-bills-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.due-bills-sub{font-size:12px;color:var(--text-muted);margin-bottom:12px;line-height:1.5}
+.btn-add-biller{background:var(--hdfc-blue);color:white;border:none;border-radius:8px;padding:13px;width:100%;font-size:13px;font-weight:700;letter-spacing:0.5px;cursor:pointer;font-family:var(--font);transition:background 0.15s}
+.btn-add-biller:active{background:var(--hdfc-blue-dark)}
 
 /* PROMO */
 .promo{margin:12px 16px;background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dark) 100%);border-radius:var(--radius);padding:18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.15s;box-shadow:0 6px 20px rgba(11,110,110,0.3)}
@@ -249,7 +263,7 @@ body{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-
 .home-ring{width:100px;height:100px;margin:0 auto}
 
 /* QUICK STATS ROW */
-.qstat{flex:1;display:flex;flex-direction:column;align-items:center;padding:14px 8px;background:var(--white);border-radius:var(--radius-sm);border:1.5px solid var(--border)}
+.qstat{flex:1;display:flex;flex-direction:column;align-items:center;padding:12px 6px;background:rgba(255,255,255,0.18)!important;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.3)}
 
 /* STAR RATING */
 .stars{display:flex;gap:3px;font-size:16px}
@@ -281,7 +295,7 @@ body{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-
      SCREEN: HDFC BANK HOME
 ══════════════════════════════════════ -->
 <div id="s-bank" class="screen active">
-  <div class="sb dark" style="background:var(--hdfc-red)">
+  <div class="sb dark" style="background:var(--hdfc-blue)">
     <span>10:13</span>
     <span style="font-size:12px;opacity:0.9">HDFC Bank</span>
     <span class="batt">49% 🔋</span>
@@ -290,75 +304,85 @@ body{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-
   <!-- HDFC Header -->
   <div class="hdfc-hdr">
     <div class="hdfc-menu">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="width:34px;height:34px;background:rgba(255,255,255,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px" onclick="toast('Menu')">☰</div>
-        <div>
-          <div style="font-size:13px;font-weight:700;color:white">HDFC Bank</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.7)">NetBanking</div>
-        </div>
-      </div>
       <div style="display:flex;align-items:center;gap:10px">
-        <div style="position:relative;cursor:pointer" onclick="toast('Notifications')">
-          <span style="font-size:20px">🔔</span>
-          <div style="position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:white;border-radius:50%;border:1.5px solid var(--hdfc-red)"></div>
-        </div>
-        <div style="width:34px;height:34px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:white;cursor:pointer">D</div>
+        <div style="width:32px;height:32px;background:rgba(255,255,255,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px" onclick="toast('Menu')">☰</div>
+        <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.9)">Menu</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="cursor:pointer;font-size:20px;color:white" onclick="toast('Help')">?</div>
+        <div style="cursor:pointer;font-size:18px;color:white" onclick="toast('Sign out')">⏻</div>
       </div>
     </div>
     <!-- Tabs -->
-    <div class="hdfc-tabs">
+    <div class="hdfc-tabs" style="display:flex;background:white;margin:0 -20px;padding:0 20px">
       <button class="htab on" onclick="">OVERVIEW</button>
+      <div style="width:1px;background:#dee2e6;margin:8px 0"></div>
       <button class="htab off" onclick="toast('Coming soon')">FAVOURITE</button>
-      <button class="htab off" onclick="toast('Coming soon')">ACCOUNTS</button>
       <button class="htab new" onclick="startOnboard()">SPEND OVERVIEW</button>
     </div>
   </div>
 
-  <div class="scroll" style="background:var(--bg)">
+  <div class="scroll" style="background:#f0f2f5">
 
     <!-- Account Balance Card -->
-    <div style="padding:12px 16px">
-      <div class="card" style="padding:20px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div>
-            <div style="font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">SAVINGS ACCOUNT</div>
-            <div style="font-size:28px;font-weight:800;color:var(--text);font-family:var(--mono)" id="bal-display">₹4,040.00</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:4px">XXXX XXXX XXXX 1288</div>
-          </div>
-          <div style="text-align:right">
-            <span class="pill green" style="margin-bottom:6px;display:block">Active</span>
-            <span style="font-size:12px;font-weight:700;color:var(--teal);cursor:pointer" onclick="toast('View All Accounts')">View All ›</span>
-          </div>
+    <div style="background:white;margin:0;padding:16px 16px 10px;border-bottom:1px solid #e5e8ed">
+      <div style="font-size:11px;font-weight:800;color:#666;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">ACCOUNTS</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--hdfc-blue);margin-bottom:2px">Savings Account <span style="font-size:16px;vertical-align:middle">›</span></div>
+          <div style="font-size:22px;font-weight:700;color:#222;font-family:var(--mono)">₹ 4,040.00</div>
         </div>
-        <!-- Mini bar -->
-        <div style="margin-top:14px;display:flex;gap:6px;align-items:center">
-          <div style="flex:2;height:4px;border-radius:2px;background:var(--hdfc-red-light)"></div>
-          <div style="flex:3;height:4px;border-radius:2px;background:var(--hdfc-red);opacity:0.6"></div>
-          <div style="flex:1;height:4px;border-radius:2px;background:var(--hdfc-red-light)"></div>
-          <span style="font-size:11px;color:var(--text-muted)">34% used</span>
-        </div>
+      </div>
+      <div style="text-align:center;margin-top:12px;padding-top:12px;border-top:1px solid #eee">
+        <span style="font-size:13px;font-weight:600;color:var(--hdfc-blue);cursor:pointer" onclick="toast('View All Accounts')">View All</span>
       </div>
     </div>
 
     <!-- Quick Services -->
-    <div style="padding:0 16px 12px">
-      <div class="card">
-        <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:14px;text-transform:uppercase">Quick Services</div>
-        <div class="qsg">
-          <div class="qsi" onclick="toast('Bill Payments')"><div class="qsic" style="background:#fce7f3">💸</div><div class="qsil">Bill Payments</div></div>
-          <div class="qsi" onclick="toast('Money Transfer')"><div class="qsic" style="background:#dbeafe">📤</div><div class="qsil">Money Transfer</div></div>
-          <div class="qsi" onclick="toast('Add Payee')"><div class="qsic" style="background:#fef3c7">➕</div><div class="qsil">Add Payee</div></div>
-          <div class="qsi" onclick="toast('Scan & Pay')"><div class="qsic" style="background:#ede9fe">📷</div><div class="qsil">Scan & Pay</div></div>
-          <div class="qsi" onclick="toast('Recharge')"><div class="qsic" style="background:#d1fae5">🔄</div><div class="qsil">Recharge</div></div>
-          <div class="qsi" onclick="toast('UPI Payment')"><div class="qsic" style="background:#e0f2fe">💳</div><div class="qsil">UPI Payment</div></div>
-          <div class="qsi" onclick="toast('Due Bills — 2 pending')"><div class="qsic" style="background:#fee2e2">📋</div><div class="qsil">Due Bills</div></div>
-          <div class="qsi" onclick="toast('Statements')"><div class="qsic" style="background:#f3f4f6">🧾</div><div class="qsil">Statements</div></div>
+    <div style="background:white;margin-top:8px;padding:6px 0">
+      <div class="qs3-grid">
+        <div class="qs3-item" onclick="toast('Bill Payments')">
+          <div class="qs3-icon">🧾</div>
+          <div class="qs3-label">Bill Payments</div>
+        </div>
+        <div class="qs3-item" onclick="toast('Money Transfer')">
+          <div class="qs3-icon" style="font-size:22px">📤</div>
+          <div class="qs3-label">Money Transfer</div>
+        </div>
+        <div class="qs3-item" onclick="toast('Add Payee')">
+          <div class="qs3-icon">👤➕</div>
+          <div class="qs3-label">Add Payee</div>
+        </div>
+        <div class="qs3-item" onclick="toast('Scan &amp; Pay')">
+          <div class="qs3-icon" style="font-size:20px">⬛₹</div>
+          <div class="qs3-label">Scan &amp; Pay</div>
+        </div>
+        <div class="qs3-item" onclick="toast('Recharge')">
+          <div class="qs3-icon">🔋</div>
+          <div class="qs3-label">Recharge</div>
+        </div>
+        <div class="qs3-item" onclick="startOnboard()" style="position:relative">
+          <div class="qs3-icon" style="background:linear-gradient(135deg,#FF6B00,#00A86B);border-color:transparent">
+            <span style="font-size:20px">🔺</span>
+          </div>
+          <div class="qs3-label">UPI Payment</div>
         </div>
       </div>
     </div>
 
+    <!-- Due Bills -->
+    <div style="background:#f5f6f7;margin-top:8px;">
+      <div style="padding:12px 16px 6px;background:white;border-bottom:1px solid #eee">
+        <div style="font-size:15px;font-weight:700;color:var(--text)">Due Bills</div>
+      </div>
+      <div style="padding:20px 16px;background:white;text-align:center">
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:16px">Register your billers and pay all your bills<br/>with 2 clicks</div>
+        <button class="btn-add-biller" onclick="toast('Add Biller — feature coming soon!')">ADD BILLER</button>
+      </div>
+    </div>
+
     <!-- Promo Banner -->
-    <div class="promo" onclick="startOnboard()">
+    <div class="promo" style="background:linear-gradient(135deg,var(--hdfc-blue) 0%,var(--hdfc-blue-dark) 100%);margin:12px 16px" onclick="startOnboard()">
       <div style="flex:1">
         <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.7);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px">✨ New Feature</div>
         <div style="font-size:18px;font-weight:800;color:white;margin-bottom:4px">Spend Overview</div>
@@ -373,22 +397,22 @@ body{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-
       <div class="card" style="padding:0;overflow:hidden">
         <div style="padding:16px 16px 10px;display:flex;justify-content:space-between;align-items:center">
           <span style="font-size:14px;font-weight:700;color:var(--text)">Recent Transactions</span>
-          <span style="font-size:12px;font-weight:700;color:var(--teal);cursor:pointer" onclick="goto('catdetail');selCat(0)">View All ›</span>
+          <span style="font-size:12px;font-weight:700;color:var(--hdfc-blue);cursor:pointer" onclick="goto('catdetail');selCat(0)">View All ›</span>
         </div>
         <div class="txn" onclick="selTxn(0);goto('txndetail')">
           <div class="av" style="width:40px;height:40px;font-size:14px;background:#FF6B35">S</div>
           <div class="txn-info"><div class="txn-m">Swiggy Food Delivery</div><div class="txn-d">Apr 20 · UPI Google Pay</div></div>
-          <div class="txn-amt">₹485</div>
+          <div class="txn-amt" style="color:var(--hdfc-blue)">₹485</div>
         </div>
         <div class="txn" onclick="selTxn(6);goto('txndetail')">
           <div class="av" style="width:40px;height:40px;font-size:14px;background:#FF9900">A</div>
           <div class="txn-info"><div class="txn-m">Amazon</div><div class="txn-d">Apr 15 · HDFC Credit Card</div></div>
-          <div class="txn-amt">₹3,200</div>
+          <div class="txn-amt" style="color:var(--hdfc-blue)">₹3,200</div>
         </div>
         <div class="txn" onclick="selTxn(9);goto('txndetail')">
           <div class="av" style="width:40px;height:40px;font-size:14px;background:#000">U</div>
           <div class="txn-info"><div class="txn-m">Uber</div><div class="txn-d">Apr 20 · UPI Google Pay</div></div>
-          <div class="txn-amt">₹420</div>
+          <div class="txn-amt" style="color:var(--hdfc-blue)">₹420</div>
         </div>
       </div>
     </div>
@@ -397,7 +421,7 @@ body{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-
 
   <!-- HDFC Bottom Nav -->
   <div class="nav">
-    <button class="navbtn on"><span class="ni">🏠</span><span class="nl" style="color:var(--hdfc-red)">Home</span></button>
+    <button class="navbtn on"><span class="ni">🏠</span><span class="nl" style="color:var(--hdfc-blue)">Home</span></button>
     <button class="navbtn" onclick="toast('Coming soon')"><span class="ni">📷</span><span class="nl">Scan QR</span></button>
     <button class="navbtn" onclick="toast('Coming soon')"><span class="ni">💬</span><span class="nl">Chat</span></button>
     <button class="navbtn" onclick="toast('Coming soon')"><span class="ni">📋</span><span class="nl">Requests</span></button>
@@ -502,13 +526,24 @@ body{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-
       </div>
     </div>
 
-    <!-- Category Bars -->
+    <!-- Bar Chart -->
     <div style="padding:0 20px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
         <span style="font-size:15px;font-weight:700;color:var(--text)">Spending by Category</span>
         <span style="font-size:12px;font-weight:700;color:var(--teal);cursor:pointer" onclick="goto('categories')">See all ›</span>
       </div>
-      <div id="home-cats"></div>
+      <!-- Column Bar Chart -->
+      <div style="background:white;border-radius:var(--radius);border:1px solid var(--border);padding:16px 14px 10px;box-shadow:var(--shadow-sm)">
+        <div id="bar-chart-area" style="display:flex;align-items:flex-end;gap:8px;height:110px;margin-bottom:8px;padding-top:28px"></div>
+        <div id="bar-chart-labels" style="display:flex;gap:8px"></div>
+        <div style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:2px;background:var(--teal)"></div><span style="font-size:10px;color:var(--text-muted)">Spent</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:2px;background:var(--border)"></div><span style="font-size:10px;color:var(--text-muted)">Goal</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:2px;background:var(--red)"></div><span style="font-size:10px;color:var(--text-muted)">Over budget</span></div>
+        </div>
+      </div>
+      <!-- Category rows below chart -->
+      <div id="home-cats" style="margin-top:10px"></div>
     </div>
 
     <!-- Trend chips -->
@@ -1012,7 +1047,40 @@ function catRowHTML(c, idx, from) {
   </div>`;
 }
 
+function renderBarChart() {
+  const chartArea = document.getElementById('bar-chart-area');
+  const labelsArea = document.getElementById('bar-chart-labels');
+  if (!chartArea) return;
+  const MAX_H = 100; // px
+  // Find max value across spent & goals for scaling
+  const maxVal = Math.max(...CATS.map(c => Math.max(activeTab==='week'?c.weekly:c.spent, c.goal)));
+  const colW = Math.floor((chartArea.parentElement.offsetWidth - 28 - (CATS.length-1)*8) / CATS.length);
+  chartArea.innerHTML = CATS.map((c,i) => {
+    const s = activeTab==='week' ? c.weekly : c.spent;
+    const g = c.goal;
+    const over = s > g;
+    const spentH = Math.round((s / maxVal) * MAX_H);
+    const goalH  = Math.round((g / maxVal) * MAX_H);
+    const barColor = over ? 'var(--red)' : s/g > 0.85 ? 'var(--amber)' : 'var(--teal)';
+    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:0;position:relative;cursor:pointer" onclick="selCat(${i},'home');goto('catdetail')">
+      <!-- goal bar (background) -->
+      <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:70%;height:${goalH}px;background:var(--border);border-radius:4px 4px 0 0;z-index:1"></div>
+      <!-- spent bar (foreground) -->
+      <div class="bar-col" style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:70%;height:0;background:${barColor};border-radius:4px 4px 0 0;z-index:2;transition:height 0.7s cubic-bezier(.4,0,.2,1)" data-h="${spentH}"></div>
+      <!-- amount label -->
+      <div style="position:absolute;bottom:${spentH+4}px;left:0;right:0;text-align:center;font-size:9px;font-weight:700;color:${barColor};z-index:3;white-space:nowrap">₹${(s/1000).toFixed(s>=1000?1:0)}k</div>
+      <div style="font-size:18px;position:absolute;top:-24px">${c.icon}</div>
+    </div>`;
+  }).join('');
+  labelsArea.innerHTML = CATS.map(c=>`<div style="flex:1;font-size:9px;color:var(--text-muted);text-align:center;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name.split(' ')[0]}</div>`).join('');
+  // Animate bars in
+  setTimeout(()=>{
+    chartArea.querySelectorAll('.bar-col').forEach(b=>{ b.style.height = b.dataset.h + 'px'; });
+  }, 80);
+}
+
 function renderHomeCats() {
+  renderBarChart();
   const el = document.getElementById('home-cats');
   if(el) el.innerHTML = CATS.map((c,i)=>catRowHTML(c,i,'home')).join('');
 }
